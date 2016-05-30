@@ -11,6 +11,7 @@ public class ProjectConfig {
     private static boolean isTestJunit = false;//测试是否在Junit
     private static boolean isTestApp = false;//测试是否是真机APP
     private static boolean isDebug = false;
+    private static String[] type = {"福利", "Android", "iOS", "休息视频", "拓展资源", "前端"};
 
     public static boolean isTest() {
         return isTestApp || isTestApp;
@@ -23,6 +24,10 @@ public class ProjectConfig {
     public static void setIsTestApp(boolean isTestApp) {
         ProjectConfig.isTestApp = isTestApp;
         ProjectConfig.isTestJunit = !isTestApp;
+    }
+
+    public static String[] getType() {
+        return type;
     }
 
     public static boolean isTestJunit() {

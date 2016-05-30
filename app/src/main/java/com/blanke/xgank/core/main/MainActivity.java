@@ -2,46 +2,80 @@ package com.blanke.xgank.core.main;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.blanke.xgank.R;
+import com.blanke.xgank.base.BaseActivity;
+import com.jakewharton.rxbinding.view.RxView;
 
-public class MainActivity extends AppCompatActivity
+import java.util.concurrent.TimeUnit;
+
+import butterknife.Bind;
+
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+    @Bind(R.id.main_tablayout)
+    TabLayout mMainTablayout;
+    @Bind(R.id.main_viewpager)
+    ViewPager mMainViewpager;
+    @Bind(R.id.fab)
+    FloatingActionButton mFab;
+    @Bind(R.id.nav_view)
+    NavigationView mNavView;
+    @Bind(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        initView();
+        initData();
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+    private void initView() {
+        setSupportActionBar(mToolbar);
+        RxView.clicks(mFab)
+                .throttleWithTimeout(500, TimeUnit.MILLISECONDS)
+                .subscribe(aVoid -> {
+                    Snackbar.make(mFab, "Replace with your own action", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                });
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        mNavView.setNavigationItemSelectedListener(this);
+    }
+
+    private void initData() {
+        mMainTablayout.setupWithViewPager(mMainViewpager);
+        mMainViewpager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public Fragment getItem(int position) {
+                return null;
+            }
+
+            @Override
+            public int getCount() {
+                return 0;
             }
         });
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
