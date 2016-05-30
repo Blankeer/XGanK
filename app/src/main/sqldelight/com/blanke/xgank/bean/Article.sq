@@ -1,0 +1,20 @@
+CREATE TABLE article (
+  _id TEXT NOT NULL PRIMARY KEY,
+  publishedAt TEXT AS 'org.threeten.bp.ZonedDateTime' NOT NULL,
+  createdAt TEXT AS 'org.threeten.bp.ZonedDateTime' NOT NULL,
+--  "desc" TEXT NOT NULL,
+  source TEXT,
+  type TEXT NOT NULL,
+  url TEXT NOT NULL,
+  used INTEGER AS Boolean DEFAULT 0,
+  who TEXT
+);
+
+select_all:
+select * from article;
+
+select_page:
+select * from article where type=? limit ? offset ?;
+
+select_by_id:
+select * from article where _id=?;

@@ -31,7 +31,7 @@ android {
 
     compileOptions {
         sourceCompatibility rootProject.ext.javaVersion
-        sourceCompatibility rootProject.ext.javaVersion
+        targetCompatibility rootProject.ext.javaVersion
     }
 
     buildTypes {
@@ -78,6 +78,10 @@ dependencies {
 
     compile rootProject.ext.libMosbyMvp
     compile rootProject.ext.libMosbyMvpState
+
+    compile rootProject.ext.libRetrofit
+    compile rootProject.ext.libRetrofitConverterGson
+    compile rootProject.ext.libRetrofitAdapterRxJava
 
 
     debugCompile rootProject.ext.debugDependencies.leakCanary
