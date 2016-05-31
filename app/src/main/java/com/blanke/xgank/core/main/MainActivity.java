@@ -71,9 +71,6 @@ public class MainActivity extends BaseActivity
 
     private void initData() {
         String[] type = ProjectConfig.getType();
-        for (String item : type) {
-            mMainTablayout.addTab(mMainTablayout.newTab().setText(item));
-        }
         mMainViewpager.setOffscreenPageLimit(type.length);
         mMainViewpager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -81,6 +78,11 @@ public class MainActivity extends BaseActivity
                 return ColumnFragmentAutoBundle
                         .createFragmentBuilder(type[position])
                         .build();
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return type[position];
             }
 
             @Override

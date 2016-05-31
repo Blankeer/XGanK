@@ -2,11 +2,16 @@ package com.blanke.xgank.core.column.persenter;
 
 import com.blanke.xgank.api.GanKAPI;
 import com.blanke.xgank.api.response.ArticleResponse;
+import com.blanke.xgank.bean.Article;
 import com.blanke.xgank.core.column.view.ColumnView;
+import com.socks.library.KLog;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -31,7 +36,20 @@ public class ColumnPersenterImpl extends ColumnPersenter {
                     .subscribeOn(Schedulers.io())
                     .map(ArticleResponse::results)
                     .filter(articles -> getView() != null)
-                    .subscribe(getView()::setData);
+                    .subscribe(new Action1<List<Article>>() {
+                        @Override
+                        public void call(List<Article> articles) {
+                            getView().setData(articles);
+                            getView().showContent();
+                            KLog.d(articles);
+                        }
+                    }, new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            KLog.e(throwable);
+                            getView().showError(throwable, pullToRefresh);
+                        }
+                    });
         }
     }
 }
