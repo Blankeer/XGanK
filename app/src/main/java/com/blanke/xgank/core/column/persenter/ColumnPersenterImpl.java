@@ -2,6 +2,7 @@ package com.blanke.xgank.core.column.persenter;
 
 import com.blanke.xgank.api.GanKAPI;
 import com.blanke.xgank.api.response.ArticleResponse;
+import com.blanke.xgank.core.column.view.ColumnView;
 
 import javax.inject.Inject;
 
@@ -21,12 +22,16 @@ public class ColumnPersenterImpl extends ColumnPersenter {
     }
 
     @Override
-    public void getAllArticle(String type, int size, int page) {
-        mGanKAPI.getArticles(type, size, page)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .map(ArticleResponse::results)
-                .filter(articles -> getView() != null)
-                .subscribe(getView()::setData);
+    public void getAllArticle(boolean pullToRefresh, String type, int size, int page) {
+        ColumnView view = getView();
+        if (view != null) {
+            view.showLoading(pullToRefresh);
+            mGanKAPI.getArticles(type, size, page)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .map(ArticleResponse::results)
+                    .filter(articles -> getView() != null)
+                    .subscribe(getView()::setData);
+        }
     }
 }

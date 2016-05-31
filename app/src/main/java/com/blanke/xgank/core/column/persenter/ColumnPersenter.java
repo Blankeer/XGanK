@@ -8,5 +8,5 @@ import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
  */
 public abstract class ColumnPersenter extends MvpBasePresenter<ColumnView> {
 
-    public abstract void getAllArticle(String type, int size, int page);
+    public abstract void getAllArticle(boolean pullToRefresh,String type, int size, int page);
 }

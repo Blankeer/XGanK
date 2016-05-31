@@ -89,4 +89,9 @@ dependencies {
     debugCompile rootProject.ext.debugDependencies.blockCanary
     releaseCompile rootProject.ext.releaseDependencies.blockCanary
 
+    compile rootProject.ext.libMaterialProgressbar
+    compile rootProject.ext.libBaseAdapter
+    compile rootProject.ext.libAutoBundle
+    apt rootProject.ext.libAutoBundleAPT
+    compile rootProject.ext.libLog
 }

@@ -1,6 +1,10 @@
 package com.blanke.xgank.app.di;
 
+import com.blanke.xgank.api.GanKAPI;
 import com.blanke.xgank.api.di.ApiModule;
+import com.blanke.xgank.app.GankApplication;
+
+import org.threeten.bp.format.DateTimeFormatter;
 
 import javax.inject.Singleton;
 
@@ -14,5 +18,9 @@ import dagger.Component;
         ApiModule.class,
         ConfigModule.class})
 public interface AppComponent {
+    GankApplication provideApplication();
 
+    DateTimeFormatter provideDateTimeFormatter();
+
+    GanKAPI provideGanKAPI();
 }

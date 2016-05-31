@@ -16,7 +16,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.blanke.xgank.R;
+import com.blanke.xgank.app.GankApplication;
 import com.blanke.xgank.base.BaseActivity;
+import com.blanke.xgank.config.ProjectConfig;
+import com.blanke.xgank.core.column.ColumnFragmentAutoBundle;
+import com.blanke.xgank.core.main.di.DaggerMainComponent;
+import com.blanke.xgank.core.main.di.MainComponent;
 import com.jakewharton.rxbinding.view.RxView;
 
 import java.util.concurrent.TimeUnit;
@@ -39,6 +44,7 @@ public class MainActivity extends BaseActivity
     NavigationView mNavView;
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
+    private MainComponent mainComponent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,18 +70,33 @@ public class MainActivity extends BaseActivity
     }
 
     private void initData() {
-        mMainTablayout.setupWithViewPager(mMainViewpager);
+        String[] type = ProjectConfig.getType();
+        for (String item : type) {
+            mMainTablayout.addTab(mMainTablayout.newTab().setText(item));
+        }
+        mMainViewpager.setOffscreenPageLimit(type.length);
         mMainViewpager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                return null;
+                return ColumnFragmentAutoBundle
+                        .createFragmentBuilder(type[position])
+                        .build();
             }
 
             @Override
             public int getCount() {
-                return 0;
+                return type.length;
             }
         });
+        mMainTablayout.setupWithViewPager(mMainViewpager);
+        mainComponent = DaggerMainComponent.builder()
+                .appComponent(GankApplication.getAppComponent())
+                .build();
+        mainComponent.inject(this);
+    }
+
+    public MainComponent getMainComponent() {
+        return mainComponent;
     }
 
     @Override

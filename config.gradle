@@ -72,4 +72,10 @@ ext {
     libButterknife="com.jakewharton:butterknife:7.0.1"
     libMosbyMvp="com.hannesdorfmann.mosby:mvp:${mosbymvpVersion}"
     libMosbyMvpState="com.hannesdorfmann.mosby:viewstate:${mosbymvpVersion}"
+    libSuperRecyclerView="com.malinskiy:superrecyclerview:1.1.4"
+    libMaterialProgressbar="me.zhanghai.android.materialprogressbar:library:1.1.5"
+    libBaseAdapter="com.github.CymChad:BaseRecyclerViewAdapterHelper:v1.7.4"
+    libAutoBundle="com.github.yatatsu:autobundle:2.0.0"
+    libAutoBundleAPT="com.github.yatatsu:autobundle-processor:2.0.0"
+    libLog="com.github.zhaokaiqiang.klog:library:1.3.0"
 }
