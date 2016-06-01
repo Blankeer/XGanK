@@ -6,7 +6,7 @@ package com.blanke.xgank.config;
 public class ProjectConfig {
     private final static String BASE_URL = "http://gank.io/";
     private final static String BASE_API_URL = BASE_URL + "api/data/";
-    public static final int PAGE_SIZE = 10;
+    public static final int PAGE_SIZE = 15;
     private static String TEST_BASE_API_URL = null;
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     private static boolean isTestJunit = false;//测试是否在Junit

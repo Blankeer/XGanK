@@ -1,10 +1,11 @@
 package com.blanke.xgank.core.column;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.widget.ImageView;
 
 import com.blanke.xgank.R;
 import com.blanke.xgank.base.BaseMvpLceViewStateFragment;
@@ -15,15 +16,17 @@ import com.blanke.xgank.core.column.persenter.ColumnPersenterImpl;
 import com.blanke.xgank.core.column.view.ColumnView;
 import com.blanke.xgank.core.main.MainActivity;
 import com.blanke.xgank.core.main.di.MainComponent;
-import com.blanke.xgank.utils.ClassAdapterUtils;
-import com.blanke.xgank.utils.DateUtils;
 import com.blanke.xgank.utils.ImgUtils;
-import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
-import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.bumptech.glide.Glide;
 import com.hannesdorfmann.mosby.mvp.viewstate.lce.LceViewState;
 import com.hannesdorfmann.mosby.mvp.viewstate.lce.data.RetainingLceViewState;
+import com.neu.refresh.NeuSwipeRefreshLayout;
+import com.neu.refresh.NeuSwipeRefreshLayoutDirection;
 import com.yatatsu.autobundle.AutoBundleField;
+
+import org.byteam.superadapter.SimpleMulItemViewType;
+import org.byteam.superadapter.SuperAdapter;
+import org.byteam.superadapter.internal.SuperViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +34,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.Bind;
+import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
+import jp.wasabeef.recyclerview.animators.ScaleInLeftAnimator;
 
 /**
  * Created by blanke on 16-5-30.
@@ -43,11 +48,11 @@ public class ColumnFragment
     @Bind(R.id.column_recyclerview)
     RecyclerView mColumnRecyclerview;
     @Bind(R.id.contentView)
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    NeuSwipeRefreshLayout mSwipeRefreshLayout;
     @Inject
     ColumnPersenterImpl mColumnPersenter;
     private List<Article> mArticles;
-    private BaseMultiItemQuickAdapter mAdapter;
+    private SuperAdapter<Article> mAdapter;
     private int page = 0;
     @AutoBundleField
     String type;
@@ -72,13 +77,55 @@ public class ColumnFragment
     @Override
     protected void initData() {
         ColumnFragmentAutoBundle.bind(this);
-        mAdapter = new ColumnAdapter(getActivity());
-        mColumnRecyclerview.setAdapter(mAdapter);
+        mColumnRecyclerview.setHasFixedSize(true);
+        mColumnRecyclerview.setItemAnimator(new ScaleInLeftAnimator());
+        mColumnRecyclerview.setLayoutManager
+                (new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        mAdapter = new SuperAdapter<Article>(getActivity(), null, new SimpleMulItemViewType<Article>() {
+            @Override
+            public int getItemViewType(int position, Article article) {
+                return ImgUtils.isImg(article.url()) ? 0 : 1;
+            }
+
+            @Override
+            public int getLayoutId(int viewType) {
+                return viewType == 0 ? R.layout.item_column_img : R.layout.item_column_text;
+            }
+        }) {
+            @Override
+            public void onBind(SuperViewHolder holder, int viewType, int layoutPosition, Article item) {
+                if (viewType == 0) {//img
+                    ImageView iv = holder.getView(R.id.item_img);
+                    Glide.with(ColumnFragment.this)
+                            .load(item.url())
+                            .into(iv);
+                } else {
+                    holder.setText(R.id.item_title, item.url());
+                    holder.setText(R.id.item_type, item.type());
+//                    holder.setText(R.id.item_time,item.type());
+                }
+            }
+        };
+        mColumnRecyclerview.setAdapter(new ScaleInAnimationAdapter(mAdapter));
         mArticles = new ArrayList<>();
-        mSwipeRefreshLayout.setOnRefreshListener(() -> {
-            page = 0;
-            loadData(false);
+        mSwipeRefreshLayout.setDirection(NeuSwipeRefreshLayoutDirection.BOTH);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary);
+
+        mSwipeRefreshLayout.setOnRefreshListener(new NeuSwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh(NeuSwipeRefreshLayoutDirection direction) {
+                if (direction == NeuSwipeRefreshLayoutDirection.TOP) {
+                    page = 0;
+                }
+                loadData(true);
+            }
         });
+    }
+
+    private void stopRefreLoad() {
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     @Override
@@ -98,55 +145,19 @@ public class ColumnFragment
 
     @Override
     public void setData(List<Article> data) {
-        this.mArticles.addAll(data);
-        mAdapter.addData(new ClassAdapterUtils<Article, ArticleType>() {
-            @Override
-            public ArticleType to(Article article) {
-                return new ArticleType(article);
-            }
-        }.get(data));
+        if (page == 0) {
+            mArticles.clear();
+            mAdapter.clear();
+            mAdapter.notifyDataSetChanged();//不要这句会报错
+        }
+        mArticles.addAll(data);
+        mAdapter.addAll(data);
         page++;
+        stopRefreLoad();
     }
 
     @Override
     public void loadData(boolean pullToRefresh) {
         mColumnPersenter.getAllArticle(pullToRefresh, type, ProjectConfig.PAGE_SIZE, page);
     }
-
-    class ArticleType extends MultiItemEntity {
-        public static final int TEXT = 1, IMG = 2;
-        public Article data;
-
-        public ArticleType(Article data) {
-            this.data = data;
-            setItemType(ImgUtils.isImg(data.url()) ? IMG : TEXT);
-        }
-    }
-
-    public class ColumnAdapter extends BaseMultiItemQuickAdapter<ArticleType> {
-
-        public ColumnAdapter(Context context) {
-            super(context, null);
-            addItmeType(ArticleType.TEXT, R.layout.item_text);
-            addItmeType(ArticleType.IMG, R.layout.item_img);
-        }
-
-        @Override
-        protected void convert(BaseViewHolder helper, ArticleType item) {
-            switch (helper.getItemViewType()) {
-                case ArticleType.TEXT:
-                    helper.setText(R.id.item_title, item.data.url());
-                    helper.setText(R.id.item_tag, item.data.type());
-                    helper.setText(R.id.item_time,
-                            DateUtils.getTimestampString(item.data.publishedAt()));
-
-                    break;
-                case ArticleType.IMG:
-
-                    break;
-            }
-        }
-
-    }
-
 }

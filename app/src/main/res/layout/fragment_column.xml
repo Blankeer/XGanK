@@ -3,16 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.neu.refresh.NeuSwipeRefreshLayout
         android:id="@id/contentView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="2dp">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/column_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </com.neu.refresh.NeuSwipeRefreshLayout>
 
     <include layout="@layout/view_error" />
 

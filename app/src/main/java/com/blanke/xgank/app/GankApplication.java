@@ -7,7 +7,6 @@ import com.blanke.xgank.app.di.AppComponent;
 import com.blanke.xgank.app.di.AppModule;
 import com.blanke.xgank.app.di.ConfigModule;
 import com.blanke.xgank.app.di.DaggerAppComponent;
-import com.blanke.xgank.config.RESTMockConfig;
 
 /**
  * Created by blanke on 16-5-27.
@@ -23,7 +22,7 @@ public class GankApplication extends Application {
                 .apiModule(new ApiModule())
                 .configModule(new ConfigModule())
                 .build();
-        RESTMockConfig.start(this);
+//        RESTMockConfig.start(this);
     }
 
     public static AppComponent getAppComponent() {

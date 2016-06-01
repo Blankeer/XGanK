@@ -1,6 +1,7 @@
 
 package com.blanke.xgank.utils;
 
+import org.threeten.bp.ZoneOffset;
 import org.threeten.bp.ZonedDateTime;
 
 import java.text.ParseException;
@@ -82,8 +83,8 @@ public class DateUtils {
     }
 
     public static String getTimestampString(ZonedDateTime date) {
-        ZonedDateTime now=ZonedDateTime.now();
-        long splitTime = now.toEpochSecond()-date.toEpochSecond();
+        ZonedDateTime now=ZonedDateTime.now(ZoneOffset.UTC);
+        long splitTime = now.getSecond()-date.getSecond();
         if (splitTime < (30 * ONE_DAY)) {
             if (splitTime < ONE_MINUTE) {
                 return "刚刚";

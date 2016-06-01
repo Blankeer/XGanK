@@ -50,6 +50,7 @@ dependencies {
     compile rootProject.ext.libSupportDesign
     compile rootProject.ext.libSupportRecyclerview
     compile rootProject.ext.libSupportV4
+    compile rootProject.ext.libSupportCardView
     testCompile rootProject.ext.libSupportAnnotations
 
     compile rootProject.ext.libRxJava
@@ -94,4 +95,8 @@ dependencies {
     compile rootProject.ext.libAutoBundle
     apt rootProject.ext.libAutoBundleAPT
     compile rootProject.ext.libLog
+    compile rootProject.ext.libXSwipeRefreshLayout
+    compile rootProject.ext.libRecyclerAnim
+    compile rootProject.ext.libGilde
+    compile rootProject.ext.libHoldScaleImageView
 }
