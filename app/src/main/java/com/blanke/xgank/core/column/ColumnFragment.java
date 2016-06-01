@@ -147,11 +147,11 @@ public class ColumnFragment
     public void setData(List<Article> data) {
         if (page == 0) {
             mArticles.clear();
-            mAdapter.clear();
-            mAdapter.notifyDataSetChanged();//不要这句会报错
+            mAdapter.replaceAll(data);
+        } else {
+            mAdapter.addAll(data);
         }
         mArticles.addAll(data);
-        mAdapter.addAll(data);
         page++;
         stopRefreLoad();
     }
